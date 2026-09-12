@@ -1,3 +1,5 @@
+import { stylePackVariants } from './stylePacks'
+
 export type ComponentMaturity = 'stable' | 'candidate' | 'experiment'
 
 export type ComponentFamily =
@@ -165,8 +167,10 @@ const families: FamilyDefinition[] = [
   },
 ]
 
-const coreComponents: UiComponentDefinition[] = families.flatMap((family) =>
-  family.variants.map(([variant, name], index) => ({
+const coreComponents: UiComponentDefinition[] = families.flatMap((family) => {
+  const variants = [...family.variants, ...stylePackVariants]
+
+  return variants.map(([variant, name], index) => ({
     id: `${family.family}-${variant}`,
     name,
     family: family.family,
@@ -175,8 +179,8 @@ const coreComponents: UiComponentDefinition[] = families.flatMap((family) =>
     description: family.description,
     tags: [...family.tags, variant],
     maturity: index === 0 ? 'candidate' : 'experiment',
-  })),
-)
+  }))
+})
 
 const experimentalNames = [
   ['mechanical', 'Mechanical Plunger', ['3d', 'physical', 'press']],
