@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { ComponentPreview } from './ComponentPreview'
 import { CodePanel } from './CodePanel'
-import { getComponentCode } from '../../registry/codeSnippets'
+import { getEnhancedComponentCode } from '../../registry/enhancedCodeSnippets'
 import type { UiComponentDefinition } from '../../registry/componentRegistry'
 
 interface ComponentDetailProps {
@@ -13,7 +13,7 @@ type PreviewTheme = 'dark' | 'light'
 
 export function ComponentDetail({ component, onBack }: ComponentDetailProps) {
   const [theme, setTheme] = useState<PreviewTheme>('dark')
-  const code = getComponentCode(component)
+  const code = getEnhancedComponentCode(component)
 
   return (
     <div className="detail-page">
@@ -54,7 +54,7 @@ export function ComponentDetail({ component, onBack }: ComponentDetailProps) {
               </button>
             </div>
           </div>
-          <div className="detail-preview-stage">
+          <div className={`detail-preview-stage preview-style-${component.variant}`}>
             <div className="detail-stage-grid" />
             <div className="detail-stage-glow" />
             <div className="detail-preview-content">
