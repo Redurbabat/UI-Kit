@@ -21,14 +21,15 @@ const initialCss = `.my-button {
 export function CustomDesignStudio({ onSave, onClose }: CustomDesignStudioProps) {
   const [name, setName] = useState('My Design')
   const [category, setCategory] = useState('Buttons')
-  const [description, setDescription] = useState('Eigenes HTML/CSS Design')
+  const [description, setDescription] = useState('Eigenes HTML/CSS/JS Design')
   const [html, setHtml] = useState(initialHtml)
   const [css, setCss] = useState(initialCss)
+  const [js, setJs] = useState('')
   const [tags, setTags] = useState('custom, css')
 
   const preview = useMemo(
-    () => ({ name: name || 'Preview', html, css }),
-    [name, html, css],
+    () => ({ name: name || 'Preview', html, css, js }),
+    [name, html, css, js],
   )
 
   const save = () => {
@@ -42,6 +43,7 @@ export function CustomDesignStudio({ onSave, onClose }: CustomDesignStudioProps)
       description: description.trim(),
       html,
       css,
+      js: js.trim() || undefined,
       tags: tags.split(',').map((tag) => tag.trim()).filter(Boolean),
       source: 'user',
     })
@@ -59,7 +61,7 @@ export function CustomDesignStudio({ onSave, onClose }: CustomDesignStudioProps)
           <div className="custom-studio-heading">
             <span>Design metadata</span>
             <h1>Eigenes Design einfügen</h1>
-            <p>HTML und CSS einfügen, direkt testen und lokal im Browser speichern.</p>
+            <p>HTML, CSS und optional JavaScript einfügen, direkt testen und lokal im Browser speichern.</p>
           </div>
 
           <div className="custom-meta-grid">
@@ -70,9 +72,10 @@ export function CustomDesignStudio({ onSave, onClose }: CustomDesignStudioProps)
           <label>Beschreibung<input value={description} onChange={(event) => setDescription(event.target.value)} /></label>
           <label>Tags<input value={tags} onChange={(event) => setTags(event.target.value)} placeholder="3d, glow, button" /></label>
 
-          <div className="custom-code-grid">
+          <div className="custom-code-grid custom-code-grid--three">
             <label>HTML<textarea spellCheck={false} value={html} onChange={(event) => setHtml(event.target.value)} /></label>
             <label>CSS<textarea spellCheck={false} value={css} onChange={(event) => setCss(event.target.value)} /></label>
+            <label>JavaScript <span className="optional-label">optional</span><textarea spellCheck={false} value={js} onChange={(event) => setJs(event.target.value)} placeholder="// optional: pointer, particles, physics …" /></label>
           </div>
 
           <div className="custom-studio-actions">
@@ -84,7 +87,7 @@ export function CustomDesignStudio({ onSave, onClose }: CustomDesignStudioProps)
         <section className="custom-studio-preview">
           <div className="preview-toolbar"><span><i /> Live preview</span><span>isolated iframe</span></div>
           <div className="custom-preview-shell"><CustomPreview design={preview} /></div>
-          <div className="custom-preview-note">Scripts sind in der Vorschau deaktiviert. HTML/CSS kann dadurch die UI-Kit-Seite nicht überschreiben.</div>
+          <div className="custom-preview-note">JavaScript läuft nur im isolierten iframe. Netzwerkzugriffe sind per CSP blockiert; die Hauptseite und ihr Storage bleiben getrennt.</div>
         </section>
       </main>
     </div>
