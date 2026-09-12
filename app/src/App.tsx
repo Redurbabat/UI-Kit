@@ -1,12 +1,30 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { ComponentDetail } from './components/showcase/ComponentDetail'
 import { ComponentShowcase } from './components/showcase/ComponentShowcase'
 import { componentCategories, componentRegistry } from './registry/componentRegistry'
 
-const ALL = 'Alle Komponenten'
+const ALL = 'Alle Designs'
+
+function componentIdFromHash() {
+  const match = window.location.hash.match(/^#\/component\/(.+)$/)
+  return match?.[1] ? decodeURIComponent(match[1]) : null
+}
 
 export function App() {
   const [query, setQuery] = useState('')
   const [activeCategory, setActiveCategory] = useState('3D Button Lab')
+  const [selectedId, setSelectedId] = useState<string | null>(() => componentIdFromHash())
+
+  useEffect(() => {
+    const syncHash = () => setSelectedId(componentIdFromHash())
+    window.addEventListener('hashchange', syncHash)
+    return () => window.removeEventListener('hashchange', syncHash)
+  }, [])
+
+  const selectedComponent = useMemo(
+    () => componentRegistry.find((component) => component.id === selectedId) ?? null,
+    [selectedId],
+  )
 
   const counts = useMemo(() => {
     const values = new Map<string, number>()
@@ -45,6 +63,19 @@ export function App() {
     })
   }
 
+  const openCode = (id: string) => {
+    window.location.hash = `/component/${encodeURIComponent(id)}`
+  }
+
+  const closeCode = () => {
+    window.location.hash = ''
+    setSelectedId(null)
+  }
+
+  if (selectedComponent) {
+    return <ComponentDetail component={selectedComponent} onBack={closeCode} />
+  }
+
   return (
     <div className="site-shell">
       <header className="topbar">
@@ -53,8 +84,8 @@ export function App() {
           <span>RED UI <b>KIT</b></span>
         </a>
         <nav className="topnav" aria-label="Hauptnavigation">
-          <a href="#library">Components</a>
-          <a href="#principles">Motion</a>
+          <a href="#library">Designs</a>
+          <a href="#principles">Styles</a>
           <a href="#about">About</a>
         </nav>
         <a className="github-link" href="https://github.com/Redurbabat/UI-Kit" target="_blank" rel="noreferrer">
@@ -65,11 +96,12 @@ export function App() {
       <main id="top">
         <section className="hero-section">
           <div className="hero-copy">
-            <span className="eyebrow"><i /> Experimental interface library</span>
-            <h1>Interfaces, die sich <em>wie Objekte</em> anfühlen.</h1>
+            <span className="eyebrow"><i /> Design playground</span>
+            <h1>Designs, die sich <em>nicht normal</em> anfühlen.</h1>
             <p>
-              3D, Glass, Glow, mechanische Bewegung und ungewöhnliche Micro-Interactions —
-              mit Live Preview und direkt kopierbarem React-, HTML- und CSS-Code.
+              Eine visuelle Sammlung aus 3D, Glass, Glow, Clay, Neon, mechanischen Controls,
+              ungewöhnlichen Cards und spielerischer Motion. Design auswählen, ausprobieren und
+              mit einem Klick den Code öffnen.
             </p>
             <div className="hero-actions">
               <button type="button" onClick={() => chooseCategory('3D Button Lab')} className="hero-primary">
@@ -80,9 +112,9 @@ export function App() {
               </button>
             </div>
             <div className="hero-stats" aria-label="Statistik">
-              <div><strong>{componentRegistry.length}</strong><span>Komponenten</span></div>
+              <div><strong>{componentRegistry.length}</strong><span>Designs</span></div>
               <div><strong>{componentCategories.length}</strong><span>Kategorien</span></div>
-              <div><strong>4</strong><span>Copy-Formate</span></div>
+              <div><strong>3</strong><span>Code-Formate</span></div>
             </div>
           </div>
 
@@ -93,33 +125,33 @@ export function App() {
             <div className="hero-core"><span>UI</span></div>
             <div className="hero-float-card hero-float-card--one">3D</div>
             <div className="hero-float-card hero-float-card--two">CSS</div>
-            <div className="hero-float-card hero-float-card--three">COPY</div>
+            <div className="hero-float-card hero-float-card--three">GET CODE</div>
           </div>
         </section>
 
         <section className="principles" id="principles">
-          <article><span>01</span><h3>Physical</h3><p>Press, depth and inertia instead of flat click states.</p></article>
-          <article><span>02</span><h3>Expressive</h3><p>Motion communicates state, hierarchy and character.</p></article>
-          <article><span>03</span><h3>Copy-ready</h3><p>The code sits beside the live component, not on another page.</p></article>
-          <article><span>04</span><h3>Accessible</h3><p>Focus states and reduced-motion behavior remain part of the system.</p></article>
+          <article><span>01</span><h3>3D & tactile</h3><p>Layered shadows, pressed movement and perspective for real depth.</p></article>
+          <article><span>02</span><h3>Glass & glow</h3><p>Blur, reflections, neon light and translucent materials.</p></article>
+          <article><span>03</span><h3>Retro & playful</h3><p>Arcade, pixel, clay, chrome and deliberately unusual shapes.</p></article>
+          <article><span>04</span><h3>Get code</h3><p>The gallery stays visual. Code opens only when you ask for it.</p></article>
         </section>
 
         <section className="library" id="library">
           <div className="library-head">
             <div>
-              <span className="section-kicker">Component library</span>
-              <h2>Preview links. Code rechts.</h2>
-              <p>Eine Komponente auswählen, ausprobieren und den benötigten Code direkt kopieren.</p>
+              <span className="section-kicker">Design library</span>
+              <h2>Erst ansehen. Dann Code holen.</h2>
+              <p>Wie eine Design-Galerie: Preview, Name und Get code. Der Editor öffnet sich separat.</p>
             </div>
             <label className="search-field">
               <span>⌕</span>
-              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Komponenten suchen …" />
+              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="3D, glass, neon, retro …" />
               {query && <button type="button" onClick={() => setQuery('')} aria-label="Suche leeren">×</button>}
             </label>
           </div>
 
           <div className="library-layout">
-            <aside className="category-nav" aria-label="Komponentenkategorien">
+            <aside className="category-nav" aria-label="Designkategorien">
               <button className={activeCategory === ALL ? 'active' : ''} type="button" onClick={() => setActiveCategory(ALL)}>
                 <span>{ALL}</span><b>{componentRegistry.length}</b>
               </button>
@@ -132,35 +164,42 @@ export function App() {
 
             <div className="component-list">
               <div className="result-bar">
-                <div><strong>{activeCategory}</strong><span>{visibleComponents.length} Ergebnisse</span></div>
-                <span className="result-hint">Hover · Click · Copy</span>
+                <div><strong>{activeCategory}</strong><span>{visibleComponents.length} Designs</span></div>
+                <span className="result-hint">Preview · Interact · Get code</span>
               </div>
 
-              {visibleComponents.length > 0 ? (
-                visibleComponents.map((component, index) => (
-                  <ComponentShowcase key={component.id} component={component} index={index} />
-                ))
-              ) : (
-                <div className="empty-state">
-                  <span>⌕</span>
-                  <h3>Nichts gefunden</h3>
-                  <p>Versuche einen anderen Namen, Effekt oder eine andere Kategorie.</p>
-                </div>
-              )}
+              <div className="design-gallery">
+                {visibleComponents.length > 0 ? (
+                  visibleComponents.map((component, index) => (
+                    <ComponentShowcase
+                      key={component.id}
+                      component={component}
+                      index={index}
+                      onGetCode={() => openCode(component.id)}
+                    />
+                  ))
+                ) : (
+                  <div className="empty-state">
+                    <span>⌕</span>
+                    <h3>Nichts gefunden</h3>
+                    <p>Versuche einen anderen Stil oder eine andere Kategorie.</p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </section>
 
         <section className="about" id="about">
-          <span className="section-kicker">Built as a system</span>
-          <h2>Nicht nur eine Sammlung von Snippets.</h2>
-          <p>Das UI Kit ist registry-basiert aufgebaut. Neue Komponenten bekommen Name, Kategorie, Tags, Live-Preview und Copy-Code und erscheinen danach automatisch im Browser.</p>
+          <span className="section-kicker">Own visual language</span>
+          <h2>Inspiriert von offenen UI-Galerien. Aber eigenständig.</h2>
+          <p>Die besten Muster aus 3D, neumorphism, gradients, glow, retro, glass und motion werden zu einer eigenen RED UI Sprache kombiniert.</p>
           <a href="https://github.com/Redurbabat/UI-Kit" target="_blank" rel="noreferrer">Repository ansehen ↗</a>
         </section>
       </main>
 
       <footer className="footer">
-        <span>RED UI KIT</span><span>Designed for BABAT RED, Redion & experiments.</span>
+        <span>RED UI KIT</span><span>Design playground for BABAT RED, Redion & experiments.</span>
       </footer>
     </div>
   )
