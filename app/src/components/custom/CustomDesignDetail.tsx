@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import type { CustomDesign } from '../../custom/types'
 import { CustomPreview } from './CustomPreview'
 
-type Tab = 'html' | 'css' | 'all'
+type Tab = 'html' | 'css' | 'js' | 'all'
 
 interface CustomDesignDetailProps {
   design: CustomDesign
@@ -28,14 +28,19 @@ export function CustomDesignDetail({ design, onBack }: CustomDesignDetailProps) 
   const [tab, setTab] = useState<Tab>('css')
   const [copied, setCopied] = useState(false)
 
-  const code = useMemo(() => ({
-    html: design.html,
-    css: design.css,
-    all: `${design.html}\n\n<style>\n${design.css}\n</style>`,
-  }), [design])
+  const code = useMemo(() => {
+    const script = design.js?.trim() ? `\n\n<script>\n${design.js}\n</script>` : ''
+    return {
+      html: design.html,
+      css: design.css,
+      js: design.js ?? '',
+      all: `${design.html}\n\n<style>\n${design.css}\n</style>${script}`,
+    }
+  }, [design])
 
   const value = code[tab]
   const lines = value.split('\n')
+  const tabs: Tab[] = design.js?.trim() ? ['html', 'css', 'js', 'all'] : ['html', 'css', 'all']
 
   const copy = async () => {
     await copyText(value)
@@ -59,7 +64,7 @@ export function CustomDesignDetail({ design, onBack }: CustomDesignDetailProps) 
         <section className="code-panel code-panel--large">
           <div className="code-toolbar">
             <div className="code-tabs" role="tablist" aria-label="Codeformat">
-              {(['html', 'css', 'all'] as const).map((item) => (
+              {tabs.map((item) => (
                 <button key={item} type="button" className={tab === item ? 'active' : ''} onClick={() => setTab(item)}>{item.toUpperCase()}</button>
               ))}
             </div>
