@@ -10,6 +10,13 @@ import { spotifyMotionButtonSeedDesigns } from './spotifyMotionButtonSeeds'
 
 const existing = new Set(seedDesigns.map((design) => design.id))
 
+for (const design of [...spotifyMotionButtonSeedDesigns].reverse()) {
+  if (!existing.has(design.id)) {
+    seedDesigns.unshift(design)
+    existing.add(design.id)
+  }
+}
+
 for (const design of [
   ...funSeedDesigns,
   ...rotatingCardSeedDesigns,
@@ -18,7 +25,6 @@ for (const design of [
   ...mechanicalGlassToggleSeedDesigns,
   ...originalGraphCardSeedDesigns,
   ...appleMotionSeedDesigns,
-  ...spotifyMotionButtonSeedDesigns,
 ]) {
   if (!existing.has(design.id)) {
     seedDesigns.push(design)
