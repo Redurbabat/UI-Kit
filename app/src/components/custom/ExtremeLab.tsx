@@ -1,14 +1,15 @@
 import { useMemo, useState } from 'react'
 import { extremeCategories, extremeSeedDesigns } from '../../custom/extremeSeedDesigns'
 import { nextCategories, nextSeedDesigns } from '../../custom/nextSeedDesigns'
+import { finalCategories, finalSeedDesigns } from '../../custom/finalSeedDesigns'
 import { CustomDesignCard } from './CustomDesignCard'
 
 interface ExtremeLabProps {
   onGetCode: (id: string) => void
 }
 
-const allDesigns = [...extremeSeedDesigns, ...nextSeedDesigns]
-const allCategories = [...extremeCategories, ...nextCategories]
+const allDesigns = [...extremeSeedDesigns, ...nextSeedDesigns, ...finalSeedDesigns]
+const allCategories = [...extremeCategories, ...nextCategories, ...finalCategories]
 
 export function ExtremeLab({ onGetCode }: ExtremeLabProps) {
   const [category, setCategory] = useState(allCategories[0] ?? '')
@@ -32,11 +33,11 @@ export function ExtremeLab({ onGetCode }: ExtremeLabProps) {
     <section className="extreme-lab" id="extreme-lab">
       <div className="extreme-head">
         <div>
-          <span className="section-kicker">Extreme 170 lab</span>
-          <h2>170 komplett übertriebene UI-Experimente.</h2>
+          <span className="section-kicker">Extreme 200 lab</span>
+          <h2>200 komplett übertriebene UI-Experimente.</h2>
           <p>
             3D, Glass, Partikel, Blur, Physics, Licht, Portale, Loader, Cursor, mechanische Controls,
-            Mini-Games, Spatial Windows, Sci-Fi Devices und animierte Illustrationen.
+            Mini-Games, Spatial Windows, Sci-Fi Devices, Ambient Scenes, Strange Inputs und Mini Devices.
           </p>
         </div>
         <div className="extreme-count"><strong>{allDesigns.length}</strong><span>live designs</span></div>
@@ -63,7 +64,7 @@ export function ExtremeLab({ onGetCode }: ExtremeLabProps) {
           <input
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="vault, physics, game, portal, 3d …"
+            placeholder="vault, physics, ambient, input, device …"
           />
           {query && <button type="button" onClick={() => setQuery('')} aria-label="Suche leeren">×</button>}
         </label>
