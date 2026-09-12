@@ -12,14 +12,27 @@ const JOURNEY = [
 ]
 
 const INTRO_KEY = 'red-ui-kit.premium-intro.v1'
+const isGalleryHash = () => !window.location.hash.startsWith('#/')
 
 export function PremiumExperience() {
   const [active, setActive] = useState('top')
   const [intro, setIntro] = useState<'enter' | 'present' | 'leave' | 'done'>('done')
+  const [galleryMode, setGalleryMode] = useState(isGalleryHash)
 
   const journey = useMemo(() => JOURNEY, [])
 
   useEffect(() => {
+    const syncRoute = () => setGalleryMode(isGalleryHash())
+    window.addEventListener('hashchange', syncRoute)
+    return () => window.removeEventListener('hashchange', syncRoute)
+  }, [])
+
+  useEffect(() => {
+    if (!galleryMode) {
+      setIntro('done')
+      return
+    }
+
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const seen = window.sessionStorage.getItem(INTRO_KEY) === 'seen'
 
@@ -40,7 +53,7 @@ export function PremiumExperience() {
     }
 
     setIntro('done')
-  }, [])
+  }, [galleryMode])
 
   useEffect(() => {
     const root = document.documentElement
@@ -85,6 +98,8 @@ export function PremiumExperience() {
   }, [])
 
   useEffect(() => {
+    if (!galleryMode) return
+
     const sections = journey
       .slice(1)
       .map((item) => ({ item, element: document.getElementById(item.id) }))
@@ -115,7 +130,7 @@ export function PremiumExperience() {
 
     sections.forEach(({ element }) => observer.observe(element))
     return () => observer.disconnect()
-  }, [journey])
+  }, [galleryMode, journey])
 
   const goTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -129,7 +144,7 @@ export function PremiumExperience() {
 
   return (
     <>
-      {intro !== 'done' && (
+      {galleryMode && intro !== 'done' && (
         <div className={`premium-intro premium-intro--${intro}`} role="presentation">
           <div className="premium-intro-grid" />
           <div className="premium-intro-orb premium-intro-orb--a" />
@@ -153,23 +168,25 @@ export function PremiumExperience() {
         <div className="premium-progress" />
       </div>
 
-      <nav className="journey-rail" aria-label="Page journey">
-        <span className="journey-rail-title">Journey</span>
-        <div className="journey-track" aria-hidden="true"><i /></div>
-        <div className="journey-points">
-          {journey.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              className={active === item.id ? 'active' : ''}
-              onClick={() => goTo(item.id)}
-              aria-label={`Go to ${item.label}`}
-            >
-              <span>{item.code}</span><i /><b>{item.label}</b>
-            </button>
-          ))}
-        </div>
-      </nav>
+      {galleryMode && (
+        <nav className="journey-rail" aria-label="Page journey">
+          <span className="journey-rail-title">Journey</span>
+          <div className="journey-track" aria-hidden="true"><i /></div>
+          <div className="journey-points">
+            {journey.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                className={active === item.id ? 'active' : ''}
+                onClick={() => goTo(item.id)}
+                aria-label={`Go to ${item.label}`}
+              >
+                <span>{item.code}</span><i /><b>{item.label}</b>
+              </button>
+            ))}
+          </div>
+        </nav>
+      )}
     </>
   )
 }
