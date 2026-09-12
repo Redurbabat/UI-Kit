@@ -1,17 +1,18 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import type { ComponentCode } from '../../registry/codeSnippets'
 
 type CodeTab = keyof ComponentCode
 
 const tabs: readonly { id: CodeTab; label: string }[] = [
-  { id: 'react', label: 'React' },
   { id: 'html', label: 'HTML' },
   { id: 'css', label: 'CSS' },
+  { id: 'react', label: 'React' },
   { id: 'all', label: 'All' },
 ]
 
 interface CodePanelProps {
   code: ComponentCode
+  large?: boolean
 }
 
 async function copyText(text: string) {
@@ -30,9 +31,10 @@ async function copyText(text: string) {
   textarea.remove()
 }
 
-export function CodePanel({ code }: CodePanelProps) {
-  const [tab, setTab] = useState<CodeTab>('react')
+export function CodePanel({ code, large = false }: CodePanelProps) {
+  const [tab, setTab] = useState<CodeTab>('css')
   const [copied, setCopied] = useState(false)
+  const lines = useMemo(() => code[tab].split('\n'), [code, tab])
 
   const handleCopy = async () => {
     await copyText(code[tab])
@@ -41,7 +43,7 @@ export function CodePanel({ code }: CodePanelProps) {
   }
 
   return (
-    <section className="code-panel" aria-label="Quellcode">
+    <section className={large ? 'code-panel code-panel--large' : 'code-panel'} aria-label="Quellcode">
       <div className="code-toolbar">
         <div className="code-tabs" role="tablist" aria-label="Codeformat">
           {tabs.map((item) => (
@@ -53,18 +55,28 @@ export function CodePanel({ code }: CodePanelProps) {
               aria-selected={tab === item.id}
               onClick={() => setTab(item.id)}
             >
+              <span className={`code-tab-icon code-tab-icon--${item.id}`} aria-hidden="true" />
               {item.label}
             </button>
           ))}
         </div>
         <button className={copied ? 'copy-button copied' : 'copy-button'} type="button" onClick={handleCopy}>
-          {copied ? '✓ Kopiert' : 'Copy'}
+          {copied ? '✓ Copied' : 'Copy code'}
         </button>
       </div>
-      <div className="code-window">
-        <div className="code-dots" aria-hidden="true"><i /><i /><i /></div>
+
+      <div className="code-editor" role="region" aria-label={`${tab} code`}>
+        <div className="code-lines" aria-hidden="true">
+          {lines.map((_, index) => <span key={index}>{index + 1}</span>)}
+        </div>
         <pre><code>{code[tab]}</code></pre>
       </div>
+
+      <footer className="code-statusbar">
+        <span>{tab.toUpperCase()}</span>
+        <span>{lines.length} lines</span>
+        <span>UTF-8</span>
+      </footer>
     </section>
   )
 }
