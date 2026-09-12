@@ -7,6 +7,7 @@ import './styles/components.css'
 import './styles/style-packs.css'
 import './styles/gallery-detail.css'
 import './styles/custom-designs.css'
+import './styles/extreme-lab.css'
 
 const root = document.getElementById('root')
 
