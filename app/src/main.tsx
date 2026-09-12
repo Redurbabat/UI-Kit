@@ -13,6 +13,7 @@ import './styles/playground-controls.css'
 import './styles/site-structure.css'
 import './styles/premium-experience.css'
 import './styles/premium-layout.css'
+import './styles/spatial-house.css'
 
 const root = document.getElementById('root')
 
