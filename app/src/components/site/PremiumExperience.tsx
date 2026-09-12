@@ -20,7 +20,6 @@ export function PremiumExperience() {
   const journey = useMemo(() => JOURNEY, [])
 
   useEffect(() => {
-    const root = document.documentElement
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const seen = window.sessionStorage.getItem(INTRO_KEY) === 'seen'
 
@@ -68,6 +67,7 @@ export function PremiumExperience() {
         const progress = Math.max(0, Math.min(1, window.scrollY / max))
         root.style.setProperty('--page-progress', String(progress))
         root.style.setProperty('--scroll-depth', `${Math.min(window.scrollY * 0.018, 24).toFixed(2)}px`)
+        if (window.scrollY < 260) setActive('top')
         scrollFrame = 0
       })
     }
@@ -85,8 +85,17 @@ export function PremiumExperience() {
   }, [])
 
   useEffect(() => {
-    const sections = Array.from(document.querySelectorAll<HTMLElement>('[data-experience-section]'))
+    const sections = journey
+      .slice(1)
+      .map((item) => ({ item, element: document.getElementById(item.id) }))
+      .filter((entry): entry is { item: (typeof JOURNEY)[number]; element: HTMLElement } => Boolean(entry.element))
+
     if (!sections.length) return
+
+    sections.forEach(({ item, element }) => {
+      element.classList.add('experience-section')
+      element.dataset.chapter = item.code
+    })
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -104,9 +113,9 @@ export function PremiumExperience() {
       { rootMargin: '-24% 0px -42% 0px', threshold: [0.08, 0.2, 0.42, 0.68] },
     )
 
-    sections.forEach((section) => observer.observe(section))
+    sections.forEach(({ element }) => observer.observe(element))
     return () => observer.disconnect()
-  }, [])
+  }, [journey])
 
   const goTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
