@@ -2,13 +2,16 @@ import { useEffect, useMemo, useState } from 'react'
 
 const JOURNEY = [
   { id: 'top', label: 'Entrance', room: 'Entrance Hall', code: '00', note: 'Welcome to RED UI KIT' },
-  { id: 'explore', label: 'Explore', room: 'Gallery Hall', code: '01', note: 'Choose your direction' },
-  { id: 'featured', label: 'Featured', room: 'Exhibition Room', code: '02', note: 'Curated interactive pieces' },
-  { id: 'motion', label: 'Motion', room: 'Motion Room', code: '03', note: 'Light, depth and movement' },
-  { id: 'playground-collection', label: 'Playground', room: 'Workshop', code: '04', note: 'Built-in experiments' },
-  { id: 'my-designs', label: 'Personal', room: 'Private Studio', code: '05', note: 'Your saved work' },
-  { id: 'extreme-lab', label: 'Extreme', room: 'Extreme Hall', code: '06', note: 'Experimental installations' },
-  { id: 'library', label: 'Library', room: 'Archive Library', code: '07', note: 'The complete component archive' },
+  { id: 'explore', label: 'Directory', room: 'House Directory', code: '01', note: 'Choose a collection room' },
+  { id: 'featured', label: 'Featured', room: 'Featured Exhibition', code: '02', note: 'Curated entrance pieces' },
+  { id: 'collection-motion', label: 'Motion', room: 'Motion Gallery', code: '03', note: 'Glass, depth and pointer light' },
+  { id: 'collection-music', label: 'Music', room: 'Music Room', code: '04', note: 'Animated playback controls' },
+  { id: 'collection-spatial', label: 'Spatial', room: 'Spatial Gallery', code: '05', note: '3D cards and dashboards' },
+  { id: 'collection-workshop', label: 'Workshop', room: 'Interaction Workshop', code: '06', note: 'Mechanical and tactile pieces' },
+  { id: 'collection-other', label: 'Experiments', room: 'Experiment Shelf', code: '07', note: 'Unclassified built-in studies' },
+  { id: 'my-designs', label: 'Personal', room: 'Private Studio', code: '08', note: 'Your saved work' },
+  { id: 'extreme-lab', label: 'Extreme', room: 'Extreme Hall', code: '09', note: 'Experimental installations' },
+  { id: 'library', label: 'Library', room: 'Archive Library', code: '10', note: 'The stable component registry' },
 ] as const
 
 const INTRO_KEY = 'red-ui-kit.premium-intro.v1'
