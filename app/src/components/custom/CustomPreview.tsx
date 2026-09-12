@@ -23,6 +23,7 @@ function buildDocument(design: CustomPreviewProps['design']) {
 <style>
 *{box-sizing:border-box}html,body{width:100%;height:100%;margin:0}body{display:grid;place-items:center;overflow:hidden;background:transparent;color:white;font-family:Inter,system-ui,sans-serif;padding:24px}
 ${css}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
