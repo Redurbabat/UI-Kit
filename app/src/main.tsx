@@ -14,6 +14,7 @@ import './styles/site-structure.css'
 import './styles/premium-experience.css'
 import './styles/premium-layout.css'
 import './styles/spatial-house.css'
+import './styles/collection-rooms.css'
 
 const root = document.getElementById('root')
 
