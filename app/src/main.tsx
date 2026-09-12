@@ -5,6 +5,7 @@ import './styles/globals.css'
 import './styles/components.css'
 import './styles/style-packs.css'
 import './styles/gallery-detail.css'
+import './styles/custom-designs.css'
 
 const root = document.getElementById('root')
 
