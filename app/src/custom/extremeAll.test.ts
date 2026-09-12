@@ -1,17 +1,18 @@
 import { describe, expect, it } from 'vitest'
 import { extremeCategories, extremeSeedDesigns } from './extremeSeedDesigns'
 import { nextCategories, nextSeedDesigns } from './nextSeedDesigns'
+import { finalCategories, finalSeedDesigns } from './finalSeedDesigns'
 
-const all = [...extremeSeedDesigns, ...nextSeedDesigns]
-const categories = [...extremeCategories, ...nextCategories]
+const all = [...extremeSeedDesigns, ...nextSeedDesigns, ...finalSeedDesigns]
+const categories = [...extremeCategories, ...nextCategories, ...finalCategories]
 
 describe('complete extreme lab', () => {
-  it('contains exactly 170 live designs', () => {
-    expect(all).toHaveLength(170)
+  it('contains exactly 200 live designs', () => {
+    expect(all).toHaveLength(200)
   })
 
-  it('contains exactly 17 categories', () => {
-    expect(categories).toHaveLength(17)
+  it('contains exactly 20 categories', () => {
+    expect(categories).toHaveLength(20)
   })
 
   it('contains 10 designs in every category', () => {
