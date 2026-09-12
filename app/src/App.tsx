@@ -8,6 +8,7 @@ import { ExtremeLab } from './components/custom/ExtremeLab'
 import { componentCategories, componentRegistry } from './registry/componentRegistry'
 import { extremeSeedDesigns } from './custom/extremeSeedDesigns'
 import { nextSeedDesigns } from './custom/nextSeedDesigns'
+import { finalSeedDesigns } from './custom/finalSeedDesigns'
 import { seedDesigns } from './custom/seedDesigns'
 import { loadUserDesigns, saveUserDesigns } from './custom/storage'
 import type { CustomDesign } from './custom/types'
@@ -43,7 +44,7 @@ export function App() {
 
   const customDesigns = useMemo(() => [...seedDesigns, ...userDesigns], [userDesigns])
   const allCustomDesigns = useMemo(
-    () => [...customDesigns, ...extremeSeedDesigns, ...nextSeedDesigns],
+    () => [...customDesigns, ...extremeSeedDesigns, ...nextSeedDesigns, ...finalSeedDesigns],
     [customDesigns],
   )
 
@@ -128,7 +129,7 @@ export function App() {
         </a>
         <nav className="topnav" aria-label="Hauptnavigation">
           <a href="#my-designs">My Designs</a>
-          <a href="#extreme-lab">Extreme 170</a>
+          <a href="#extreme-lab">Extreme 200</a>
           <a href="#library">Designs</a>
           <a href="#principles">Styles</a>
         </nav>
@@ -145,15 +146,15 @@ export function App() {
             <h1>Designs, die sich <em>nicht normal</em> anfühlen.</h1>
             <p>
               3D, Glass, Glow, Blur, Partikel, physische Bewegung, Portale, mechanische Controls,
-              Mini-Games, Spatial Windows, Sci-Fi Devices und Cursor-Reaktionen. Eigene HTML/CSS/JS-Experimente kannst du ebenfalls einfügen.
+              Mini-Games, Spatial Windows, Sci-Fi Devices, Ambient Scenes und ungewöhnliche Inputs. Eigene HTML/CSS/JS-Experimente kannst du ebenfalls einfügen.
             </p>
             <div className="hero-actions">
-              <button type="button" onClick={openExtreme} className="hero-primary">Extreme 170 öffnen <span>↘</span></button>
+              <button type="button" onClick={openExtreme} className="hero-primary">Extreme 200 öffnen <span>↘</span></button>
               <button type="button" onClick={() => { window.location.hash = '/studio' }} className="hero-secondary">Eigenes Design +</button>
             </div>
             <div className="hero-stats" aria-label="Statistik">
               <div><strong>{componentRegistry.length + allCustomDesigns.length}</strong><span>Designs</span></div>
-              <div><strong>170</strong><span>Extreme Lab</span></div>
+              <div><strong>200</strong><span>Extreme Lab</span></div>
               <div><strong>{customDesigns.length}</strong><span>My Designs</span></div>
             </div>
           </div>
@@ -165,7 +166,7 @@ export function App() {
             <div className="hero-core"><span>UI</span></div>
             <div className="hero-float-card hero-float-card--one">3D</div>
             <div className="hero-float-card hero-float-card--two">FX</div>
-            <div className="hero-float-card hero-float-card--three">170</div>
+            <div className="hero-float-card hero-float-card--three">200</div>
           </div>
         </section>
 
@@ -239,7 +240,7 @@ export function App() {
         <section className="about" id="about">
           <span className="section-kicker">Own visual language</span>
           <h2>Design-Galerie, Extreme Lab und persönliches Code-Labor.</h2>
-          <p>Feste Library-Designs, 170 übertriebene Experimente und deine eigenen HTML/CSS/JS-Ideen leben nebeneinander, ohne dass Preview-Code die Website überschreibt.</p>
+          <p>Feste Library-Designs, 200 übertriebene Experimente und deine eigenen HTML/CSS/JS-Ideen leben nebeneinander, ohne dass Preview-Code die Website überschreibt.</p>
           <a href="https://github.com/Redurbabat/UI-Kit" target="_blank" rel="noreferrer">Repository ansehen ↗</a>
         </section>
       </main>
