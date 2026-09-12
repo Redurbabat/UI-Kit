@@ -7,6 +7,7 @@ import { CustomDesignStudio } from './components/custom/CustomDesignStudio'
 import { ExtremeLab } from './components/custom/ExtremeLab'
 import { componentCategories, componentRegistry } from './registry/componentRegistry'
 import { extremeSeedDesigns } from './custom/extremeSeedDesigns'
+import { nextSeedDesigns } from './custom/nextSeedDesigns'
 import { seedDesigns } from './custom/seedDesigns'
 import { loadUserDesigns, saveUserDesigns } from './custom/storage'
 import type { CustomDesign } from './custom/types'
@@ -41,7 +42,10 @@ export function App() {
   }, [])
 
   const customDesigns = useMemo(() => [...seedDesigns, ...userDesigns], [userDesigns])
-  const allCustomDesigns = useMemo(() => [...customDesigns, ...extremeSeedDesigns], [customDesigns])
+  const allCustomDesigns = useMemo(
+    () => [...customDesigns, ...extremeSeedDesigns, ...nextSeedDesigns],
+    [customDesigns],
+  )
 
   const selectedComponent = useMemo(
     () => route.kind === 'component' ? componentRegistry.find((component) => component.id === route.id) ?? null : null,
@@ -124,7 +128,7 @@ export function App() {
         </a>
         <nav className="topnav" aria-label="Hauptnavigation">
           <a href="#my-designs">My Designs</a>
-          <a href="#extreme-lab">Extreme 100</a>
+          <a href="#extreme-lab">Extreme 170</a>
           <a href="#library">Designs</a>
           <a href="#principles">Styles</a>
         </nav>
@@ -140,16 +144,16 @@ export function App() {
             <span className="eyebrow"><i /> Extreme design playground</span>
             <h1>Designs, die sich <em>nicht normal</em> anfühlen.</h1>
             <p>
-              3D, Glass, Glow, Blur, Partikel, physische Bewegung, Portale, Cursor-Reaktionen und
-              ungewöhnliche Microinteractions. Dazu kannst du eigene HTML/CSS/JS-Experimente einfügen.
+              3D, Glass, Glow, Blur, Partikel, physische Bewegung, Portale, mechanische Controls,
+              Mini-Games, Spatial Windows, Sci-Fi Devices und Cursor-Reaktionen. Eigene HTML/CSS/JS-Experimente kannst du ebenfalls einfügen.
             </p>
             <div className="hero-actions">
-              <button type="button" onClick={openExtreme} className="hero-primary">Extreme 100 öffnen <span>↘</span></button>
+              <button type="button" onClick={openExtreme} className="hero-primary">Extreme 170 öffnen <span>↘</span></button>
               <button type="button" onClick={() => { window.location.hash = '/studio' }} className="hero-secondary">Eigenes Design +</button>
             </div>
             <div className="hero-stats" aria-label="Statistik">
               <div><strong>{componentRegistry.length + allCustomDesigns.length}</strong><span>Designs</span></div>
-              <div><strong>100</strong><span>Extreme Lab</span></div>
+              <div><strong>170</strong><span>Extreme Lab</span></div>
               <div><strong>{customDesigns.length}</strong><span>My Designs</span></div>
             </div>
           </div>
@@ -161,14 +165,14 @@ export function App() {
             <div className="hero-core"><span>UI</span></div>
             <div className="hero-float-card hero-float-card--one">3D</div>
             <div className="hero-float-card hero-float-card--two">FX</div>
-            <div className="hero-float-card hero-float-card--three">100</div>
+            <div className="hero-float-card hero-float-card--three">170</div>
           </div>
         </section>
 
         <section className="principles" id="principles">
           <article><span>01</span><h3>3D & tactile</h3><p>Layered shadows, real press travel, perspective and spatial depth.</p></article>
           <article><span>02</span><h3>Glass & light</h3><p>Blur, reflections, ambient glow, chrome, neon and translucent materials.</p></article>
-          <article><span>03</span><h3>Physics & particles</h3><p>Pointer reactions, gravity-like motion, trails, bursts and springy movement.</p></article>
+          <article><span>03</span><h3>Physics & particles</h3><p>Pointer reactions, gravity-like motion, trails, bursts, springs and mechanical movement.</p></article>
           <article><span>04</span><h3>Bring your own</h3><p>Paste HTML, CSS and optional JS into an isolated live preview and save it locally.</p></article>
         </section>
 
@@ -235,7 +239,7 @@ export function App() {
         <section className="about" id="about">
           <span className="section-kicker">Own visual language</span>
           <h2>Design-Galerie, Extreme Lab und persönliches Code-Labor.</h2>
-          <p>Feste Library-Designs, 100 übertriebene Experimente und deine eigenen HTML/CSS/JS-Ideen leben nebeneinander, ohne dass Preview-Code die Website überschreibt.</p>
+          <p>Feste Library-Designs, 170 übertriebene Experimente und deine eigenen HTML/CSS/JS-Ideen leben nebeneinander, ohne dass Preview-Code die Website überschreibt.</p>
           <a href="https://github.com/Redurbabat/UI-Kit" target="_blank" rel="noreferrer">Repository ansehen ↗</a>
         </section>
       </main>
