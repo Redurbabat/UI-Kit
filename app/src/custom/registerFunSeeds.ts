@@ -5,6 +5,7 @@ import { userSnippetSeedDesigns } from './userSnippetSeeds'
 import { kpiFlowSeedDesigns } from './kpiFlowSeeds'
 import { mechanicalGlassToggleSeedDesigns } from './mechanicalGlassToggleSeeds'
 import { originalGraphCardSeedDesigns } from './originalGraphCardSeeds'
+import { appleMotionSeedDesigns } from './appleMotionSeeds'
 
 const existing = new Set(seedDesigns.map((design) => design.id))
 
@@ -15,6 +16,7 @@ for (const design of [
   ...kpiFlowSeedDesigns,
   ...mechanicalGlassToggleSeedDesigns,
   ...originalGraphCardSeedDesigns,
+  ...appleMotionSeedDesigns,
 ]) {
   if (!existing.has(design.id)) {
     seedDesigns.push(design)
