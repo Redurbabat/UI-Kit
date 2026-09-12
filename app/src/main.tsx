@@ -9,6 +9,7 @@ import './styles/gallery-detail.css'
 import './styles/custom-designs.css'
 import './styles/extreme-lab.css'
 import './styles/playground-controls.css'
+import './styles/site-structure.css'
 
 const root = document.getElementById('root')
 
