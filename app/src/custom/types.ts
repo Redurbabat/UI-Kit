@@ -5,6 +5,7 @@ export interface CustomDesign {
   description: string
   html: string
   css: string
+  js?: string
   previewCss?: string
   tags: string[]
   source: 'seed' | 'user'
