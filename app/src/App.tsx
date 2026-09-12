@@ -4,6 +4,7 @@ import { ComponentShowcase } from './components/showcase/ComponentShowcase'
 import { CustomDesignCard } from './components/custom/CustomDesignCard'
 import { CustomDesignDetail } from './components/custom/CustomDesignDetail'
 import { CustomDesignStudio } from './components/custom/CustomDesignStudio'
+import { CustomPreview } from './components/custom/CustomPreview'
 import { ExtremeLab } from './components/custom/ExtremeLab'
 import { componentCategories, componentRegistry } from './registry/componentRegistry'
 import { extremeSeedDesigns } from './custom/extremeSeedDesigns'
@@ -14,6 +15,14 @@ import { loadUserDesigns, saveUserDesigns } from './custom/storage'
 import type { CustomDesign } from './custom/types'
 
 const ALL = 'Alle Designs'
+const FEATURED_IDS = [
+  'apple-glass-stat-card',
+  'original-3d-graph-card',
+  'red-flowing-kpi-card-row',
+  'extreme-rotating-3d-card-ring',
+  'apple-spatial-login',
+  'apple-control-center-panel',
+]
 
 type Route =
   | { kind: 'gallery' }
@@ -35,6 +44,7 @@ export function App() {
   const [activeCategory, setActiveCategory] = useState('3D Button Lab')
   const [route, setRoute] = useState<Route>(() => routeFromHash())
   const [userDesigns, setUserDesigns] = useState<CustomDesign[]>(() => loadUserDesigns())
+  const [showAllSeeds, setShowAllSeeds] = useState(false)
 
   useEffect(() => {
     const syncHash = () => setRoute(routeFromHash())
@@ -47,6 +57,23 @@ export function App() {
     () => [...customDesigns, ...extremeSeedDesigns, ...nextSeedDesigns, ...finalSeedDesigns],
     [customDesigns],
   )
+
+  const heroDesign = useMemo(
+    () => seedDesigns.find((design) => design.id === 'apple-glass-stat-card') ?? seedDesigns[0] ?? null,
+    [],
+  )
+
+  const featuredDesigns = useMemo(() => {
+    const byId = new Map(seedDesigns.map((design) => [design.id, design]))
+    return FEATURED_IDS.map((id) => byId.get(id)).filter((design): design is CustomDesign => Boolean(design))
+  }, [])
+
+  const appleMotionDesigns = useMemo(
+    () => seedDesigns.filter((design) => design.category === 'Apple Motion'),
+    [],
+  )
+
+  const visibleSeedDesigns = showAllSeeds ? seedDesigns : seedDesigns.slice(0, 8)
 
   const selectedComponent = useMemo(
     () => route.kind === 'component' ? componentRegistry.find((component) => component.id === route.id) ?? null : null,
@@ -79,15 +106,15 @@ export function App() {
     })
   }, [activeCategory, query])
 
-  const chooseCategory = (category: string) => {
-    setActiveCategory(category)
+  const scrollTo = (id: string) => {
     window.requestAnimationFrame(() => {
-      document.getElementById('library')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     })
   }
 
-  const openExtreme = () => {
-    document.getElementById('extreme-lab')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  const chooseCategory = (category: string) => {
+    setActiveCategory(category)
+    scrollTo('library')
   }
 
   const closeRoute = () => {
@@ -106,6 +133,10 @@ export function App() {
     const next = userDesigns.filter((design) => design.id !== id)
     setUserDesigns(next)
     saveUserDesigns(next)
+  }
+
+  const openDesign = (id: string) => {
+    window.location.hash = `/custom/${encodeURIComponent(id)}`
   }
 
   if (route.kind === 'studio') {
@@ -128,10 +159,11 @@ export function App() {
           <span>RED UI <b>KIT</b></span>
         </a>
         <nav className="topnav" aria-label="Hauptnavigation">
+          <a href="#explore">Explore</a>
+          <a href="#motion">Motion</a>
           <a href="#my-designs">My Designs</a>
-          <a href="#extreme-lab">Extreme 200</a>
-          <a href="#library">Designs</a>
-          <a href="#principles">Styles</a>
+          <a href="#extreme-lab">Extreme</a>
+          <a href="#library">Library</a>
         </nav>
         <div className="topbar-actions">
           <button className="add-design-top" type="button" onClick={() => { window.location.hash = '/studio' }}>+ Add design</button>
@@ -140,72 +172,154 @@ export function App() {
       </header>
 
       <main id="top">
-        <section className="hero-section">
+        <section className="hero-section hero-section--structured">
           <div className="hero-copy">
-            <span className="eyebrow"><i /> Extreme design playground</span>
-            <h1>Designs, die sich <em>nicht normal</em> anfühlen.</h1>
+            <span className="eyebrow"><i /> Component playground</span>
+            <h1>Eine Library für UI, <em>Motion & Experimente.</em></h1>
             <p>
-              3D, Glass, Glow, Blur, Partikel, physische Bewegung, Portale, mechanische Controls,
-              Mini-Games, Spatial Windows, Sci-Fi Devices, Ambient Scenes und ungewöhnliche Inputs. Eigene HTML/CSS/JS-Experimente kannst du ebenfalls einfügen.
+              Nicht mehr alles in einem Block: kuratierte Designs, Apple Motion, eigene Experimente,
+              Extreme Lab und die klassische Component Library haben jetzt klare Bereiche.
             </p>
             <div className="hero-actions">
-              <button type="button" onClick={openExtreme} className="hero-primary">Extreme 200 öffnen <span>↘</span></button>
+              <button type="button" onClick={() => scrollTo('explore')} className="hero-primary">Explore starten <span>↘</span></button>
               <button type="button" onClick={() => { window.location.hash = '/studio' }} className="hero-secondary">Eigenes Design +</button>
             </div>
             <div className="hero-stats" aria-label="Statistik">
               <div><strong>{componentRegistry.length + allCustomDesigns.length}</strong><span>Designs</span></div>
-              <div><strong>200</strong><span>Extreme Lab</span></div>
-              <div><strong>{customDesigns.length}</strong><span>My Designs</span></div>
+              <div><strong>{seedDesigns.length}</strong><span>Built-in</span></div>
+              <div><strong>{userDesigns.length}</strong><span>Saved</span></div>
             </div>
           </div>
 
-          <div className="hero-object" aria-hidden="true">
-            <div className="hero-grid" />
-            <div className="hero-orbit hero-orbit--a" />
-            <div className="hero-orbit hero-orbit--b" />
-            <div className="hero-core"><span>UI</span></div>
-            <div className="hero-float-card hero-float-card--one">3D</div>
-            <div className="hero-float-card hero-float-card--two">FX</div>
-            <div className="hero-float-card hero-float-card--three">200</div>
+          {heroDesign && (
+            <div className="hero-live-card">
+              <div className="preview-toolbar">
+                <span><i /> Live component</span>
+                <span className="preview-id">{heroDesign.category}</span>
+              </div>
+              <div className="hero-live-stage">
+                <CustomPreview design={heroDesign} />
+              </div>
+              <div className="hero-live-meta">
+                <div><span>Featured</span><strong>{heroDesign.name}</strong></div>
+                <button type="button" onClick={() => openDesign(heroDesign.id)}>Get code ↗</button>
+              </div>
+            </div>
+          )}
+        </section>
+
+        <section className="site-directory" id="explore">
+          <div className="library-head directory-head">
+            <div>
+              <span className="section-kicker">Start here</span>
+              <h2>Was willst du bauen?</h2>
+              <p>Die Website ist jetzt nach Aufgabe und Design-Art gegliedert.</p>
+            </div>
+          </div>
+          <div className="directory-grid">
+            <button type="button" onClick={() => scrollTo('featured')}><span>01 · Curated</span><strong>Featured designs</strong><p>Die stärksten vorhandenen Komponenten zuerst.</p><b>{featuredDesigns.length} picks</b></button>
+            <button type="button" onClick={() => scrollTo('motion')}><span>02 · Motion</span><strong>Apple Motion</strong><p>Glass, Depth, Pointer Light und ruhige 3D-Bewegung.</p><b>{appleMotionDesigns.length} designs</b></button>
+            <button type="button" onClick={() => scrollTo('playground-collection')}><span>03 · Playground</span><strong>Built-in experiments</strong><p>Fun, 3D, Mechanical, Loaders und ungewöhnliche UI.</p><b>{seedDesigns.length} designs</b></button>
+            <button type="button" onClick={() => scrollTo('my-designs')}><span>04 · Personal</span><strong>My Designs</strong><p>Nur deine lokal gespeicherten HTML/CSS/JS-Designs.</p><b>{userDesigns.length} saved</b></button>
+            <button type="button" onClick={() => scrollTo('extreme-lab')}><span>05 · Extreme</span><strong>Extreme 200</strong><p>20 Kategorien mit bewusst übertriebenen Experimenten.</p><b>200 experiments</b></button>
+            <button type="button" onClick={() => chooseCategory(ALL)}><span>06 · Registry</span><strong>Component Library</strong><p>Stabile Komponenten nach Kategorie durchsuchen.</p><b>{componentRegistry.length} components</b></button>
           </div>
         </section>
 
-        <section className="principles" id="principles">
-          <article><span>01</span><h3>3D & tactile</h3><p>Layered shadows, real press travel, perspective and spatial depth.</p></article>
-          <article><span>02</span><h3>Glass & light</h3><p>Blur, reflections, ambient glow, chrome, neon and translucent materials.</p></article>
-          <article><span>03</span><h3>Physics & particles</h3><p>Pointer reactions, gravity-like motion, trails, bursts, springs and mechanical movement.</p></article>
-          <article><span>04</span><h3>Bring your own</h3><p>Paste HTML, CSS and optional JS into an isolated live preview and save it locally.</p></article>
+        <section className="principles structure-principles" id="principles">
+          <article><span>01</span><h3>Browse</h3><p>Erst kuratierte Beispiele ansehen, statt direkt in hunderte Designs einzusteigen.</p></article>
+          <article><span>02</span><h3>Interact</h3><p>Live Preview, Pointer Motion, Controls und echte Zustände direkt ausprobieren.</p></article>
+          <article><span>03</span><h3>Get code</h3><p>Detail-Workbench öffnen und HTML, CSS, JavaScript oder React separat kopieren.</p></article>
+          <article><span>04</span><h3>Build your own</h3><p>Eigenes Design einfügen und vorhandene Motion-Presets darauf anwenden.</p></article>
         </section>
 
-        <section className="my-designs" id="my-designs">
+        <section className="structured-section" id="featured">
           <div className="library-head">
             <div>
-              <span className="section-kicker">My designs</span>
-              <h2>Deine eigene Sammlung.</h2>
-              <p>Deine Seed-Designs und lokal gespeicherten Experimente. Weitere HTML/CSS/JS-Designs kannst du direkt selbst einfügen.</p>
+              <span className="section-kicker">Featured</span>
+              <h2>Gute Einstiege statt Zufall.</h2>
+              <p>Eine kleine Auswahl vorhandener UI-Kit-Designs, die unterschiedliche Richtungen zeigen.</p>
             </div>
-            <button className="hero-primary my-design-add" type="button" onClick={() => { window.location.hash = '/studio' }}>+ Add your design</button>
+            <button className="section-link-button" type="button" onClick={() => scrollTo('playground-collection')}>Alle Built-ins ↓</button>
           </div>
-          <div className="custom-design-grid">
-            {customDesigns.map((design) => (
-              <CustomDesignCard
-                key={design.id}
-                design={design}
-                onGetCode={() => { window.location.hash = `/custom/${encodeURIComponent(design.id)}` }}
-                onDelete={design.source === 'user' ? () => deleteCustom(design.id) : undefined}
-              />
+          <div className="custom-design-grid structured-card-grid">
+            {featuredDesigns.map((design) => (
+              <CustomDesignCard key={design.id} design={design} onGetCode={() => openDesign(design.id)} />
             ))}
           </div>
         </section>
 
-        <ExtremeLab onGetCode={(id) => { window.location.hash = `/custom/${encodeURIComponent(id)}` }} />
-
-        <section className="library" id="library">
+        <section className="structured-section motion-section" id="motion">
           <div className="library-head">
             <div>
-              <span className="section-kicker">Design library</span>
-              <h2>Erst ansehen. Dann Code holen.</h2>
-              <p>Preview, Name und Get code. Der Editor öffnet sich separat.</p>
+              <span className="section-kicker">Motion system</span>
+              <h2>Apple Depth als eigene Familie.</h2>
+              <p>Dieselbe Motion-Sprache auf Stat Card, Login, Control Center, Media, App Tile und Command Palette.</p>
+            </div>
+            <button className="section-link-button" type="button" onClick={() => { window.location.hash = '/studio' }}>Preset benutzen +</button>
+          </div>
+          <div className="custom-design-grid structured-card-grid">
+            {appleMotionDesigns.map((design) => (
+              <CustomDesignCard key={design.id} design={design} onGetCode={() => openDesign(design.id)} />
+            ))}
+          </div>
+        </section>
+
+        <section className="structured-section" id="playground-collection">
+          <div className="library-head">
+            <div>
+              <span className="section-kicker">Built-in playground</span>
+              <h2>Die vorhandenen Experimente.</h2>
+              <p>Seed-Designs sind jetzt von deinen persönlichen Designs getrennt. Nichts geht verloren.</p>
+            </div>
+            <button className="section-link-button" type="button" onClick={() => setShowAllSeeds((value) => !value)}>
+              {showAllSeeds ? 'Weniger zeigen ↑' : `Alle ${seedDesigns.length} zeigen ↓`}
+            </button>
+          </div>
+          <div className="custom-design-grid structured-card-grid">
+            {visibleSeedDesigns.map((design) => (
+              <CustomDesignCard key={design.id} design={design} onGetCode={() => openDesign(design.id)} />
+            ))}
+          </div>
+        </section>
+
+        <section className="my-designs structured-section" id="my-designs">
+          <div className="library-head">
+            <div>
+              <span className="section-kicker">My designs</span>
+              <h2>Dein eigener Bereich.</h2>
+              <p>Hier stehen nur Designs, die du selbst im Studio gespeichert hast.</p>
+            </div>
+            <button className="hero-primary my-design-add" type="button" onClick={() => { window.location.hash = '/studio' }}>+ Add your design</button>
+          </div>
+          {userDesigns.length > 0 ? (
+            <div className="custom-design-grid structured-card-grid">
+              {userDesigns.map((design) => (
+                <CustomDesignCard
+                  key={design.id}
+                  design={design}
+                  onGetCode={() => openDesign(design.id)}
+                  onDelete={() => deleteCustom(design.id)}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="personal-empty">
+              <span>＋</span>
+              <div><strong>Noch keine eigenen Designs</strong><p>Füge HTML/CSS/JS ein oder starte mit dem Apple-Depth-Preset.</p></div>
+              <button type="button" onClick={() => { window.location.hash = '/studio' }}>Design hinzufügen</button>
+            </div>
+          )}
+        </section>
+
+        <ExtremeLab onGetCode={openDesign} />
+
+        <section className="library structured-section" id="library">
+          <div className="library-head">
+            <div>
+              <span className="section-kicker">Component library</span>
+              <h2>Die klassische Registry.</h2>
+              <p>Stabile Komponenten nach Kategorie filtern, previewen und anschließend Code holen.</p>
             </div>
             <label className="search-field">
               <span>⌕</span>
@@ -238,14 +352,14 @@ export function App() {
         </section>
 
         <section className="about" id="about">
-          <span className="section-kicker">Own visual language</span>
-          <h2>Design-Galerie, Extreme Lab und persönliches Code-Labor.</h2>
-          <p>Feste Library-Designs, 200 übertriebene Experimente und deine eigenen HTML/CSS/JS-Ideen leben nebeneinander, ohne dass Preview-Code die Website überschreibt.</p>
+          <span className="section-kicker">One visual system</span>
+          <h2>Galerie, Motion, Extreme Lab und persönliches Code-Labor.</h2>
+          <p>Die vorhandenen UI-Bausteine bleiben erhalten, sind aber jetzt nach Zweck getrennt und leichter erreichbar.</p>
           <a href="https://github.com/Redurbabat/UI-Kit" target="_blank" rel="noreferrer">Repository ansehen ↗</a>
         </section>
       </main>
 
-      <footer className="footer"><span>RED UI KIT</span><span>Design playground for BABAT RED, Redion & experiments.</span></footer>
+      <footer className="footer"><span>RED UI KIT</span><span>Design playground for BABAT RED and experiments.</span></footer>
     </div>
   )
 }
