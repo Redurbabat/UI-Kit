@@ -1,15 +1,15 @@
 import { useEffect, useMemo, useState } from 'react'
 
 const JOURNEY = [
-  { id: 'top', label: 'Entrance', code: '00' },
-  { id: 'explore', label: 'Explore', code: '01' },
-  { id: 'featured', label: 'Featured', code: '02' },
-  { id: 'motion', label: 'Motion', code: '03' },
-  { id: 'playground-collection', label: 'Playground', code: '04' },
-  { id: 'my-designs', label: 'Personal', code: '05' },
-  { id: 'extreme-lab', label: 'Extreme', code: '06' },
-  { id: 'library', label: 'Library', code: '07' },
-]
+  { id: 'top', label: 'Entrance', room: 'Entrance Hall', code: '00', note: 'Welcome to RED UI KIT' },
+  { id: 'explore', label: 'Explore', room: 'Gallery Hall', code: '01', note: 'Choose your direction' },
+  { id: 'featured', label: 'Featured', room: 'Exhibition Room', code: '02', note: 'Curated interactive pieces' },
+  { id: 'motion', label: 'Motion', room: 'Motion Room', code: '03', note: 'Light, depth and movement' },
+  { id: 'playground-collection', label: 'Playground', room: 'Workshop', code: '04', note: 'Built-in experiments' },
+  { id: 'my-designs', label: 'Personal', room: 'Private Studio', code: '05', note: 'Your saved work' },
+  { id: 'extreme-lab', label: 'Extreme', room: 'Extreme Hall', code: '06', note: 'Experimental installations' },
+  { id: 'library', label: 'Library', room: 'Archive Library', code: '07', note: 'The complete component archive' },
+] as const
 
 const INTRO_KEY = 'red-ui-kit.premium-intro.v1'
 const isGalleryHash = () => !window.location.hash.startsWith('#/')
@@ -20,12 +20,31 @@ export function PremiumExperience() {
   const [galleryMode, setGalleryMode] = useState(isGalleryHash)
 
   const journey = useMemo(() => JOURNEY, [])
+  const currentIndex = Math.max(0, journey.findIndex((item) => item.id === active))
+  const currentRoom = journey[currentIndex] ?? journey[0]
+  const nextRoom = journey[currentIndex + 1] ?? null
 
   useEffect(() => {
     const syncRoute = () => setGalleryMode(isGalleryHash())
     window.addEventListener('hashchange', syncRoute)
     return () => window.removeEventListener('hashchange', syncRoute)
   }, [])
+
+  useEffect(() => {
+    const root = document.documentElement
+    if (galleryMode) {
+      root.dataset.room = currentRoom.id
+      root.style.setProperty('--room-index', String(currentIndex))
+    } else {
+      delete root.dataset.room
+      root.style.removeProperty('--room-index')
+    }
+
+    return () => {
+      delete root.dataset.room
+      root.style.removeProperty('--room-index')
+    }
+  }, [currentIndex, currentRoom.id, galleryMode])
 
   useEffect(() => {
     if (!galleryMode) {
@@ -69,6 +88,8 @@ export function PremiumExperience() {
         root.style.setProperty('--site-my', `${(y * 100).toFixed(1)}%`)
         root.style.setProperty('--scene-ry', `${((x - 0.5) * -5).toFixed(2)}deg`)
         root.style.setProperty('--scene-rx', `${((y - 0.5) * 3.5).toFixed(2)}deg`)
+        root.style.setProperty('--house-pan-x', `${((x - 0.5) * -16).toFixed(2)}px`)
+        root.style.setProperty('--house-pan-y', `${((y - 0.5) * -8).toFixed(2)}px`)
         pointerFrame = 0
       })
     }
@@ -80,6 +101,7 @@ export function PremiumExperience() {
         const progress = Math.max(0, Math.min(1, window.scrollY / max))
         root.style.setProperty('--page-progress', String(progress))
         root.style.setProperty('--scroll-depth', `${Math.min(window.scrollY * 0.018, 24).toFixed(2)}px`)
+        root.style.setProperty('--house-stride', `${(progress * 38).toFixed(2)}px`)
         if (window.scrollY < 260) setActive('top')
         scrollFrame = 0
       })
@@ -108,8 +130,9 @@ export function PremiumExperience() {
     if (!sections.length) return
 
     sections.forEach(({ item, element }) => {
-      element.classList.add('experience-section')
+      element.classList.add('experience-section', 'house-room-section')
       element.dataset.chapter = item.code
+      element.dataset.roomName = item.room
     })
 
     const observer = new IntersectionObserver(
@@ -169,23 +192,55 @@ export function PremiumExperience() {
       </div>
 
       {galleryMode && (
-        <nav className="journey-rail" aria-label="Page journey">
-          <span className="journey-rail-title">Journey</span>
-          <div className="journey-track" aria-hidden="true"><i /></div>
-          <div className="journey-points">
-            {journey.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                className={active === item.id ? 'active' : ''}
-                onClick={() => goTo(item.id)}
-                aria-label={`Go to ${item.label}`}
-              >
-                <span>{item.code}</span><i /><b>{item.label}</b>
-              </button>
-            ))}
+        <>
+          <div className="spatial-house" aria-hidden="true">
+            <div className="house-ceiling"><i /><i /><i /></div>
+            <div className="house-wall house-wall--left" />
+            <div className="house-wall house-wall--right" />
+            <div className="house-floor"><div className="house-floor-lines" /></div>
+            <div className="house-far-wall">
+              <div className="house-door-glow" />
+              <div className="house-door-frame" key={currentRoom.id}>
+                <div className="house-door-inner">
+                  <span>{nextRoom ? 'NEXT ROOM' : 'END OF TOUR'}</span>
+                  <strong>{nextRoom?.room ?? currentRoom.room}</strong>
+                  <small>{nextRoom?.note ?? currentRoom.note}</small>
+                </div>
+              </div>
+            </div>
+            <div className="house-room-light" />
           </div>
-        </nav>
+
+          <div className="house-room-plaque" key={`plaque-${currentRoom.id}`}>
+            <span>{currentRoom.code} / ROOM</span>
+            <strong>{currentRoom.room}</strong>
+            <small>{currentRoom.note}</small>
+          </div>
+
+          {nextRoom && (
+            <button className="house-next-step" type="button" onClick={() => goTo(nextRoom.id)}>
+              <span>Walk to next room</span><strong>{nextRoom.room}</strong><i>→</i>
+            </button>
+          )}
+
+          <nav className="journey-rail" aria-label="Page journey">
+            <span className="journey-rail-title">Floor plan</span>
+            <div className="journey-track" aria-hidden="true"><i /></div>
+            <div className="journey-points">
+              {journey.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  className={active === item.id ? 'active' : ''}
+                  onClick={() => goTo(item.id)}
+                  aria-label={`Go to ${item.room}`}
+                >
+                  <span>{item.code}</span><i /><b>{item.room}</b>
+                </button>
+              ))}
+            </div>
+          </nav>
+        </>
       )}
     </>
   )
