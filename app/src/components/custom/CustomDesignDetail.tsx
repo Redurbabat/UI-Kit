@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react'
 import type { CustomDesign } from '../../custom/types'
-import { useDesignFavorites } from '../../custom/preferences'
+import { useDesignFavorites, useDesignRatings } from '../../custom/preferences'
 import { CustomPreview, type PreviewSettings } from './CustomPreview'
 
 type Tab = 'html' | 'css' | 'js' | 'all'
@@ -29,12 +29,15 @@ async function copyText(text: string) {
 export function CustomDesignDetail({ design, onBack }: CustomDesignDetailProps) {
   const [tab, setTab] = useState<Tab>('css')
   const [copied, setCopied] = useState(false)
+  const [shared, setShared] = useState(false)
   const [background, setBackground] = useState<PreviewBackground>('dark')
   const [accent, setAccent] = useState('#756cff')
   const [speed, setSpeed] = useState(1)
   const stageRef = useRef<HTMLDivElement>(null)
   const { favorites, toggleFavorite } = useDesignFavorites()
+  const { ratings, rateDesign, clearRating } = useDesignRatings()
   const favorite = favorites.has(design.id)
+  const rating = ratings[design.id] ?? 0
 
   const settings = useMemo<PreviewSettings>(() => ({ background, accent, speed }), [background, accent, speed])
 
@@ -58,6 +61,22 @@ export function CustomDesignDetail({ design, onBack }: CustomDesignDetailProps) 
     window.setTimeout(() => setCopied(false), 1200)
   }
 
+  const share = async () => {
+    const url = window.location.href
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: `${design.name} · RED UI Kit`, text: design.description, url })
+        setShared(true)
+      } catch {
+        return
+      }
+    } else {
+      await copyText(url)
+      setShared(true)
+    }
+    window.setTimeout(() => setShared(false), 1400)
+  }
+
   const toggleFullscreen = async () => {
     if (document.fullscreenElement) {
       await document.exitFullscreen()
@@ -71,13 +90,16 @@ export function CustomDesignDetail({ design, onBack }: CustomDesignDetailProps) 
       <header className="detail-topbar">
         <button className="detail-back" type="button" onClick={onBack}>← Go back</button>
         <div className="detail-meta"><span>{design.category}</span><strong>{design.name}</strong><span>{design.source}</span></div>
-        <button
-          type="button"
-          className={favorite ? 'detail-favorite active' : 'detail-favorite'}
-          onClick={() => toggleFavorite(design.id)}
-        >
-          {favorite ? '★ Favorit' : '☆ Favorit'}
-        </button>
+        <div className="detail-actions">
+          <button type="button" className="detail-share" onClick={share}>{shared ? '✓ Shared' : '↗ Share'}</button>
+          <button
+            type="button"
+            className={favorite ? 'detail-favorite active' : 'detail-favorite'}
+            onClick={() => toggleFavorite(design.id)}
+          >
+            {favorite ? '★ Favorit' : '☆ Favorit'}
+          </button>
+        </div>
       </header>
 
       <div className="playground-toolbar" aria-label="Preview controls">
@@ -96,6 +118,14 @@ export function CustomDesignDetail({ design, onBack }: CustomDesignDetailProps) 
           <span>Motion {speed.toFixed(2)}×</span>
           <input type="range" min="0.25" max="2.5" step="0.25" value={speed} onChange={(event) => setSpeed(Number(event.target.value))} />
         </label>
+        <div className="playground-control playground-rating" title={rating ? `${rating}/5` : 'Noch nicht bewertet'}>
+          <span>Rating</span>
+          <div>
+            {[1, 2, 3, 4, 5].map((value) => (
+              <button key={value} type="button" className={value <= rating ? 'active' : ''} onClick={() => value === rating ? clearRating(design.id) : rateDesign(design.id, value)} aria-label={`${value} Sterne`}>★</button>
+            ))}
+          </div>
+        </div>
         <button type="button" className="playground-reset" onClick={() => { setBackground('dark'); setAccent('#756cff'); setSpeed(1) }}>Reset</button>
         <button type="button" className="playground-fullscreen" onClick={toggleFullscreen}>⛶ Fullscreen</button>
       </div>
@@ -107,7 +137,7 @@ export function CustomDesignDetail({ design, onBack }: CustomDesignDetailProps) 
           </div>
           <div className="detail-preview-caption">
             <span>{design.name}</span>
-            <small>{design.tags.join(' · ')}</small>
+            <small>{design.tags.join(' · ')}{rating ? ` · ${rating}/5 ★` : ''}</small>
           </div>
         </section>
 
