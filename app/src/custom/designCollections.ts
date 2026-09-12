@@ -41,7 +41,7 @@ export function buildDesignCollections(designs: CustomDesign[]): DesignCollectio
       continue
     }
 
-    if (design.category === 'Music Controls' || hasTag(design, ['music', 'spotify-inspired'])) {
+    if (categoryIncludes(design, ['music']) || hasTag(design, ['music', 'spotify-inspired', 'spotify'])) {
       buckets.music.push(design)
       continue
     }
@@ -65,7 +65,7 @@ export function buildDesignCollections(designs: CustomDesign[]): DesignCollectio
     buckets.other.push(design)
   }
 
-  return [
+  const collections: DesignCollection[] = [
     {
       id: 'motion',
       label: 'Motion Gallery',
@@ -106,5 +106,7 @@ export function buildDesignCollections(designs: CustomDesign[]): DesignCollectio
       tags: ['experimental', 'misc'],
       designs: buckets.other,
     },
-  ].filter((collection) => collection.designs.length > 0)
+  ]
+
+  return collections.filter((collection) => collection.designs.length > 0)
 }
