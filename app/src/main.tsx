@@ -1,6 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { App } from './App'
+import './custom/registerFunSeeds'
 import './styles/globals.css'
 import './styles/components.css'
 import './styles/style-packs.css'
