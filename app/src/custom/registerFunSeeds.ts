@@ -10,6 +10,9 @@ import { spotifyMotionButtonSeedDesigns } from './spotifyMotionButtonSeeds'
 import { catalogExpansionA } from './catalogExpansionA'
 import { catalogExpansionB } from './catalogExpansionB'
 import { catalogExpansionC } from './catalogExpansionC'
+import { catalogExpansionD } from './catalogExpansionD'
+import { catalogExpansionE } from './catalogExpansionE'
+import { catalogExpansionF } from './catalogExpansionF'
 
 const existing = new Set(seedDesigns.map((design) => design.id))
 
@@ -31,6 +34,9 @@ for (const design of [
   ...catalogExpansionA,
   ...catalogExpansionB,
   ...catalogExpansionC,
+  ...catalogExpansionD,
+  ...catalogExpansionE,
+  ...catalogExpansionF,
 ]) {
   if (!existing.has(design.id)) {
     seedDesigns.push(design)
