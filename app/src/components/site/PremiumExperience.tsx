@@ -88,7 +88,7 @@ export function PremiumExperience() {
   useEffect(() => {
     if (!galleryMode) return
 
-    const sections = ['featured', 'catalog', 'library']
+    const sections = ['featured', 'catalog']
       .map((id) => document.getElementById(id))
       .filter((element): element is HTMLElement => Boolean(element))
 
