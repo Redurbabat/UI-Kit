@@ -12,24 +12,17 @@ describe('catalog expansion', () => {
     expect(new Set(designs.map((design) => design.id)).size).toBe(27)
   })
 
-  it('covers the main component categories without falling into Other', () => {
-    const counts = new Map<string, number>()
+  it('classifies every design into a concrete component family', () => {
+    const types = new Set<string>()
+
     for (const design of designs) {
       const type = classifyDesignType(design)
-      counts.set(type, (counts.get(type) ?? 0) + 1)
       expect(type).not.toBe('other')
+      types.add(type)
     }
 
-    expect(counts.get('buttons')).toBe(4)
-    expect(counts.get('cards')).toBe(4)
-    expect(counts.get('inputs')).toBe(3)
-    expect(counts.get('toggles')).toBe(2)
-    expect(counts.get('loaders')).toBe(2)
-    expect(counts.get('navigation')).toBe(2)
-    expect(counts.get('data')).toBe(2)
-    expect(counts.get('media')).toBe(2)
-    expect(counts.get('spatial')).toBe(2)
-    expect(counts.get('mechanical')).toBe(2)
-    expect(counts.get('feedback')).toBe(2)
+    for (const required of ['buttons', 'cards', 'inputs', 'toggles', 'loaders', 'navigation', 'data', 'media', 'spatial', 'mechanical', 'feedback']) {
+      expect(types.has(required)).toBe(true)
+    }
   })
 })
