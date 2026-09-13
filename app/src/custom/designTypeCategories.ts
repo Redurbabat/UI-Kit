@@ -7,6 +7,10 @@ export type DesignTypeId =
   | 'toggles'
   | 'loaders'
   | 'navigation'
+  | 'overlays'
+  | 'tables'
+  | 'progress'
+  | 'profiles'
   | 'data'
   | 'media'
   | 'spatial'
@@ -35,13 +39,17 @@ export function classifyDesignType(design: CustomDesign): DesignTypeId {
   const identity = identityOf(design)
   const text = fullTextOf(design)
 
-  // Explicit component identity wins over every visual/style label.
+  // Explicit component identity wins over visual/style labels.
   if (contains(identity, ['toggle', 'switch', 'checkbox', 'radio'])) return 'toggles'
   if (contains(identity, ['loader', 'spinner', 'loading', 'skeleton'])) return 'loaders'
   if (contains(identity, ['login', 'sign in', 'form', 'input', 'search', 'field', 'textarea', 'select', 'password', 'slider'])) return 'inputs'
+  if (contains(identity, ['modal', 'dialog', 'popover', 'tooltip', 'drawer', 'sheet', 'overlay', 'command palette'])) return 'overlays'
+  if (contains(identity, ['table', 'list', 'kanban', 'row', 'inbox', 'activity feed'])) return 'tables'
+  if (contains(identity, ['progress', 'stepper', 'steps', 'timeline step', 'completion', 'wizard'])) return 'progress'
+  if (contains(identity, ['avatar', 'profile', 'user chip', 'presence', 'member stack'])) return 'profiles'
   if (contains(identity, ['navigation', 'navbar', 'menu', 'tabs', 'breadcrumb', 'pagination', 'sidebar', 'dock'])) return 'navigation'
   if (contains(identity, ['button', 'buttons', ' btn ', 'cta'])) return 'buttons'
-  if (contains(identity, ['card', 'cards', 'ticket', 'profile', 'pricing', 'tile'])) return 'cards'
+  if (contains(identity, ['card', 'cards', 'ticket', 'pricing', 'tile'])) return 'cards'
   if (contains(identity, ['dashboard', 'analytics', 'metric', 'kpi', 'graph', 'chart', 'data'])) return 'data'
   if (contains(identity, ['media', 'player', 'album', 'video', 'photo', 'audio'])) return 'media'
   if (contains(identity, ['mechanical', 'device', 'gear', 'printer', 'reactor', 'knob', 'dial', 'lever', 'filament'])) return 'mechanical'
@@ -50,8 +58,12 @@ export function classifyDesignType(design: CustomDesign): DesignTypeId {
 
   // Fallbacks use description/tags only when the name/category did not identify a component type.
   if (contains(text, ['toggle', 'switch', 'checkbox', 'radio'])) return 'toggles'
-  if (contains(text, ['loader', 'spinner', 'loading', 'skeleton', 'progress ring'])) return 'loaders'
+  if (contains(text, ['loader', 'spinner', 'loading', 'skeleton'])) return 'loaders'
   if (contains(text, ['login', 'form', 'input', 'search', 'textarea', 'select', 'password'])) return 'inputs'
+  if (contains(text, ['modal', 'dialog', 'popover', 'tooltip', 'drawer', 'sheet', 'overlay'])) return 'overlays'
+  if (contains(text, ['table', 'list', 'kanban', 'row', 'inbox', 'activity feed'])) return 'tables'
+  if (contains(text, ['progress', 'stepper', 'steps', 'completion', 'wizard'])) return 'progress'
+  if (contains(text, ['avatar', 'profile', 'presence', 'member'])) return 'profiles'
   if (contains(text, ['button', 'cta'])) return 'buttons'
   if (contains(text, ['card', 'ticket'])) return 'cards'
   if (contains(text, ['navigation', 'menu', 'tabs', 'sidebar', 'dock'])) return 'navigation'
@@ -71,6 +83,10 @@ const META: Array<Omit<DesignTypeCategory, 'designs'>> = [
   { id: 'toggles', label: 'Toggles', description: 'Switches, Toggles, Checkboxen und binäre Controls.' },
   { id: 'loaders', label: 'Loaders', description: 'Spinner, Loader, Loading-States und Fortschrittsanzeigen.' },
   { id: 'navigation', label: 'Navigation', description: 'Menüs, Tabs, Sidebars, Docks und Navigationsmuster.' },
+  { id: 'overlays', label: 'Modals & Overlays', description: 'Dialoge, Popovers, Tooltips, Drawers und schwebende Bedienflächen.' },
+  { id: 'tables', label: 'Tables & Lists', description: 'Tabellen, Listen, Kanban-Ansichten, Inbox-Reihen und strukturierte Sammlungen.' },
+  { id: 'progress', label: 'Progress & Steps', description: 'Fortschritt, Stepper, Wizards und mehrstufige Abläufe.' },
+  { id: 'profiles', label: 'Avatars & Profiles', description: 'Avatare, Profile, Presence, Member-Stacks und Identitätsbausteine.' },
   { id: 'data', label: 'Dashboards & Data', description: 'Dashboards, Graphen, Charts und Analytics-Flächen, sofern sie keine Card sind.' },
   { id: 'media', label: 'Media', description: 'Player, Audio, Video, Album- und Medienoberflächen.' },
   { id: 'spatial', label: '3D & Spatial', description: 'Räumliche Szenen, Carousels und 3D-Objekte, die kein anderer UI-Typ sind.' },
