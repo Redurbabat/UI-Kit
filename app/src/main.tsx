@@ -15,6 +15,7 @@ import './styles/premium-experience.css'
 import './styles/premium-layout.css'
 import './styles/spatial-house.css'
 import './styles/collection-rooms.css'
+import './styles/stone-gallery.css'
 
 const root = document.getElementById('root')
 
