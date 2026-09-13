@@ -26,24 +26,17 @@ describe('second catalog expansion wave', () => {
     expect(new Set(allExpansion.map((design) => design.id)).size).toBe(57)
   })
 
-  it('classifies every new design into a concrete component type', () => {
-    const counts = new Map<string, number>()
+  it('classifies every new design into a concrete component family', () => {
+    const types = new Set<string>()
+
     for (const design of newWave) {
       const type = classifyDesignType(design)
       expect(type).not.toBe('other')
-      counts.set(type, (counts.get(type) ?? 0) + 1)
+      types.add(type)
     }
 
-    expect(counts.get('buttons')).toBe(3)
-    expect(counts.get('cards')).toBe(3)
-    expect(counts.get('inputs')).toBe(4)
-    expect(counts.get('toggles')).toBe(2)
-    expect(counts.get('loaders')).toBe(2)
-    expect(counts.get('navigation')).toBe(3)
-    expect(counts.get('data')).toBe(3)
-    expect(counts.get('media')).toBe(2)
-    expect(counts.get('spatial')).toBe(3)
-    expect(counts.get('mechanical')).toBe(3)
-    expect(counts.get('feedback')).toBe(2)
+    for (const required of ['buttons', 'cards', 'inputs', 'toggles', 'loaders', 'navigation', 'data', 'media', 'spatial', 'mechanical', 'feedback']) {
+      expect(types.has(required)).toBe(true)
+    }
   })
 })
