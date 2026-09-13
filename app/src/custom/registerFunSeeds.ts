@@ -13,6 +13,9 @@ import { catalogExpansionC } from './catalogExpansionC'
 import { catalogExpansionD } from './catalogExpansionD'
 import { catalogExpansionE } from './catalogExpansionE'
 import { catalogExpansionF } from './catalogExpansionF'
+import { catalogExpansionG } from './catalogExpansionG'
+import { catalogExpansionH } from './catalogExpansionH'
+import { catalogExpansionI } from './catalogExpansionI'
 
 const existing = new Set(seedDesigns.map((design) => design.id))
 
@@ -37,6 +40,9 @@ for (const design of [
   ...catalogExpansionD,
   ...catalogExpansionE,
   ...catalogExpansionF,
+  ...catalogExpansionG,
+  ...catalogExpansionH,
+  ...catalogExpansionI,
 ]) {
   if (!existing.has(design.id)) {
     seedDesigns.push(design)
