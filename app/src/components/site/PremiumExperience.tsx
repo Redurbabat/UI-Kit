@@ -25,7 +25,6 @@ export function PremiumExperience() {
   const journey = useMemo(() => JOURNEY, [])
   const currentIndex = Math.max(0, journey.findIndex((item) => item.id === active))
   const currentRoom = journey[currentIndex] ?? journey[0]
-  const nextRoom = journey[currentIndex + 1] ?? null
 
   useEffect(() => {
     const syncRoute = () => setGalleryMode(isGalleryHash())
@@ -60,12 +59,12 @@ export function PremiumExperience() {
 
     if (!reduced && !seen) {
       setIntro('enter')
-      const presentTimer = window.setTimeout(() => setIntro('present'), 260)
-      const leaveTimer = window.setTimeout(() => setIntro('leave'), 2350)
+      const presentTimer = window.setTimeout(() => setIntro('present'), 180)
+      const leaveTimer = window.setTimeout(() => setIntro('leave'), 1900)
       const doneTimer = window.setTimeout(() => {
         setIntro('done')
         window.sessionStorage.setItem(INTRO_KEY, 'seen')
-      }, 3150)
+      }, 2550)
 
       return () => {
         window.clearTimeout(presentTimer)
@@ -89,10 +88,10 @@ export function PremiumExperience() {
         const y = event.clientY / Math.max(window.innerHeight, 1)
         root.style.setProperty('--site-mx', `${(x * 100).toFixed(1)}%`)
         root.style.setProperty('--site-my', `${(y * 100).toFixed(1)}%`)
-        root.style.setProperty('--scene-ry', `${((x - 0.5) * -5).toFixed(2)}deg`)
-        root.style.setProperty('--scene-rx', `${((y - 0.5) * 3.5).toFixed(2)}deg`)
-        root.style.setProperty('--house-pan-x', `${((x - 0.5) * -16).toFixed(2)}px`)
-        root.style.setProperty('--house-pan-y', `${((y - 0.5) * -8).toFixed(2)}px`)
+        root.style.setProperty('--scene-ry', `${((x - 0.5) * -3).toFixed(2)}deg`)
+        root.style.setProperty('--scene-rx', `${((y - 0.5) * 2).toFixed(2)}deg`)
+        root.style.setProperty('--house-pan-x', `${((x - 0.5) * -8).toFixed(2)}px`)
+        root.style.setProperty('--house-pan-y', `${((y - 0.5) * -4).toFixed(2)}px`)
         pointerFrame = 0
       })
     }
@@ -103,8 +102,8 @@ export function PremiumExperience() {
         const max = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1)
         const progress = Math.max(0, Math.min(1, window.scrollY / max))
         root.style.setProperty('--page-progress', String(progress))
-        root.style.setProperty('--scroll-depth', `${Math.min(window.scrollY * 0.018, 24).toFixed(2)}px`)
-        root.style.setProperty('--house-stride', `${(progress * 38).toFixed(2)}px`)
+        root.style.setProperty('--scroll-depth', `${Math.min(window.scrollY * 0.009, 12).toFixed(2)}px`)
+        root.style.setProperty('--house-stride', `${(progress * 16).toFixed(2)}px`)
         if (window.scrollY < 260) setActive('top')
         scrollFrame = 0
       })
@@ -165,7 +164,7 @@ export function PremiumExperience() {
   const skipIntro = () => {
     window.sessionStorage.setItem(INTRO_KEY, 'seen')
     setIntro('leave')
-    window.setTimeout(() => setIntro('done'), 650)
+    window.setTimeout(() => setIntro('done'), 520)
   }
 
   return (
@@ -173,8 +172,6 @@ export function PremiumExperience() {
       {galleryMode && intro !== 'done' && (
         <div className={`premium-intro premium-intro--${intro}`} role="presentation">
           <div className="premium-intro-grid" />
-          <div className="premium-intro-orb premium-intro-orb--a" />
-          <div className="premium-intro-orb premium-intro-orb--b" />
           <div className="premium-intro-content">
             <span className="premium-intro-index">RED / 001</span>
             <div className="premium-intro-mark" aria-hidden="true"><i /><i /><b>R</b></div>
@@ -201,16 +198,7 @@ export function PremiumExperience() {
             <div className="house-wall house-wall--left" />
             <div className="house-wall house-wall--right" />
             <div className="house-floor"><div className="house-floor-lines" /></div>
-            <div className="house-far-wall">
-              <div className="house-door-glow" />
-              <div className="house-door-frame" key={currentRoom.id}>
-                <div className="house-door-inner">
-                  <span>{nextRoom ? 'NEXT ROOM' : 'END OF TOUR'}</span>
-                  <strong>{nextRoom?.room ?? currentRoom.room}</strong>
-                  <small>{nextRoom?.note ?? currentRoom.note}</small>
-                </div>
-              </div>
-            </div>
+            <div className="house-far-wall"><div className="house-stone-panel" /></div>
             <div className="house-room-light" />
           </div>
 
@@ -219,12 +207,6 @@ export function PremiumExperience() {
             <strong>{currentRoom.room}</strong>
             <small>{currentRoom.note}</small>
           </div>
-
-          {nextRoom && (
-            <button className="house-next-step" type="button" onClick={() => goTo(nextRoom.id)}>
-              <span>Walk to next room</span><strong>{nextRoom.room}</strong><i>→</i>
-            </button>
-          )}
 
           <nav className="journey-rail" aria-label="Page journey">
             <span className="journey-rail-title">Floor plan</span>
