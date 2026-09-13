@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, type PointerEvent } from 'react'
 import { buildDesignTypeCategories, type DesignTypeId } from '../../custom/designTypeCategories'
 import type { CustomDesign } from '../../custom/types'
 import { CustomDesignCard } from './CustomDesignCard'
@@ -34,10 +34,34 @@ export function TypeCatalog({ designs, onOpen, onDeleteUser }: TypeCatalogProps)
     })
   }
 
+  const moveCatalog = (event: PointerEvent<HTMLElement>) => {
+    if (event.pointerType === 'touch') return
+    const catalog = event.currentTarget
+    const rect = catalog.getBoundingClientRect()
+    const x = Math.max(0, Math.min(1, (event.clientX - rect.left) / Math.max(rect.width, 1)))
+    const y = Math.max(0, Math.min(1, (event.clientY - rect.top) / Math.max(rect.height, 1)))
+    catalog.style.setProperty('--catalog-mx', `${(x * 100).toFixed(1)}%`)
+    catalog.style.setProperty('--catalog-my', `${(y * 100).toFixed(1)}%`)
+    catalog.style.setProperty('--catalog-pan-x', `${((x - 0.5) * 12).toFixed(2)}px`)
+    catalog.style.setProperty('--catalog-pan-y', `${((y - 0.5) * 8).toFixed(2)}px`)
+  }
+
   if (!activeCategory) return null
 
   return (
-    <section className="type-catalog" id="catalog">
+    <section
+      className="type-catalog"
+      id="catalog"
+      data-active-category={activeCategory.id}
+      onPointerMove={moveCatalog}
+    >
+      <div className="catalog-ambient" aria-hidden="true">
+        <i className="catalog-ambient-light" />
+        <i className="catalog-ambient-orbit catalog-ambient-orbit--one" />
+        <i className="catalog-ambient-orbit catalog-ambient-orbit--two" />
+        <i className="catalog-ambient-grid" />
+      </div>
+
       <div className="catalog-intro">
         <span className="section-kicker">Component catalog</span>
         <h2>Nach Bauteil geordnet.</h2>
