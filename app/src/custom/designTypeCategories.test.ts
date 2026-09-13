@@ -19,7 +19,8 @@ describe('design type categories', () => {
     expect(classifyDesignType(design('b', 'Mechanical Toggle', 'Mechanical Controls', ['toggle', 'button']))).toBe('toggles')
     expect(classifyDesignType(design('c', 'Spatial Login', 'Apple Motion', ['login', 'glass']))).toBe('inputs')
     expect(classifyDesignType(design('d', 'Neon Spinner', '3D Objects', ['spinner']))).toBe('loaders')
-    expect(classifyDesignType(design('e', 'Flow KPI Card', 'Cards & Dashboards', ['kpi', 'card']))).toBe('data')
+    expect(classifyDesignType(design('e', 'Flow KPI Card', 'Cards & Dashboards', ['kpi', 'card']))).toBe('cards')
+    expect(classifyDesignType(design('f', 'Analytics Dashboard', 'Dashboards', ['chart']))).toBe('data')
   })
 
   it('places every design in exactly one category', () => {
