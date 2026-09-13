@@ -21,6 +21,10 @@ describe('design type categories', () => {
     expect(classifyDesignType(design('d', 'Neon Spinner', '3D Objects', ['spinner']))).toBe('loaders')
     expect(classifyDesignType(design('e', 'Flow KPI Card', 'Cards & Dashboards', ['kpi', 'card']))).toBe('cards')
     expect(classifyDesignType(design('f', 'Analytics Dashboard', 'Dashboards', ['chart']))).toBe('data')
+    expect(classifyDesignType(design('g', 'Stone Confirm Modal', 'Modals & Overlays', ['modal']))).toBe('overlays')
+    expect(classifyDesignType(design('h', 'Project Status Table', 'Tables & Lists', ['table']))).toBe('tables')
+    expect(classifyDesignType(design('i', 'Four Step Stepper', 'Progress & Steps', ['stepper']))).toBe('progress')
+    expect(classifyDesignType(design('j', 'Presence Avatar', 'Avatars & Profiles', ['profile']))).toBe('profiles')
   })
 
   it('places every design in exactly one category', () => {
@@ -30,6 +34,9 @@ describe('design type categories', () => {
       design('c', 'Search Input', 'Inputs', ['search']),
       design('d', 'Orbit Scene', '3D Objects', ['3d']),
       design('e', 'Toast Notice', 'Feedback', ['toast']),
+      design('f', 'Context Popover', 'Modals & Overlays', ['popover']),
+      design('g', 'Compact File List', 'Tables & Lists', ['list']),
+      design('h', 'Circular Completion', 'Progress & Steps', ['progress']),
     ]
 
     const categories = buildDesignTypeCategories(designs)
