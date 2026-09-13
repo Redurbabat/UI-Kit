@@ -7,6 +7,9 @@ import { mechanicalGlassToggleSeedDesigns } from './mechanicalGlassToggleSeeds'
 import { originalGraphCardSeedDesigns } from './originalGraphCardSeeds'
 import { appleMotionSeedDesigns } from './appleMotionSeeds'
 import { spotifyMotionButtonSeedDesigns } from './spotifyMotionButtonSeeds'
+import { catalogExpansionA } from './catalogExpansionA'
+import { catalogExpansionB } from './catalogExpansionB'
+import { catalogExpansionC } from './catalogExpansionC'
 
 const existing = new Set(seedDesigns.map((design) => design.id))
 
@@ -25,6 +28,9 @@ for (const design of [
   ...mechanicalGlassToggleSeedDesigns,
   ...originalGraphCardSeedDesigns,
   ...appleMotionSeedDesigns,
+  ...catalogExpansionA,
+  ...catalogExpansionB,
+  ...catalogExpansionC,
 ]) {
   if (!existing.has(design.id)) {
     seedDesigns.push(design)
