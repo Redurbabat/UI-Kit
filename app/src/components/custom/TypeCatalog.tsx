@@ -29,6 +29,7 @@ export function TypeCatalog({ designs, onOpen, onDeleteUser }: TypeCatalogProps)
 
   const chooseCategory = (id: DesignTypeId) => {
     setActiveId(id)
+    setQuery('')
     window.requestAnimationFrame(() => {
       document.getElementById('catalog-content')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     })
@@ -87,7 +88,7 @@ export function TypeCatalog({ designs, onOpen, onDeleteUser }: TypeCatalogProps)
           <button className="catalog-add" type="button" onClick={() => { window.location.hash = '/studio' }}>+ Add design</button>
         </aside>
 
-        <div className="catalog-content" id="catalog-content">
+        <div className="catalog-content" id="catalog-content" key={activeCategory.id}>
           <header className="catalog-category-head">
             <div>
               <span className="catalog-index">{String(categories.findIndex((item) => item.id === activeCategory.id) + 1).padStart(2, '0')}</span>
