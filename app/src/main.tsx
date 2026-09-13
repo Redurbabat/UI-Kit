@@ -16,6 +16,7 @@ import './styles/premium-layout.css'
 import './styles/spatial-house.css'
 import './styles/stone-gallery.css'
 import './styles/type-catalog.css'
+import './styles/catalog-motion.css'
 
 const root = document.getElementById('root')
 
