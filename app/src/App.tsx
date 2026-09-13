@@ -1,11 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
-import { TypeCatalog } from './components/custom/TypeCatalog'
 import { CustomDesignCard } from './components/custom/CustomDesignCard'
 import { CustomDesignDetail } from './components/custom/CustomDesignDetail'
 import { CustomDesignStudio } from './components/custom/CustomDesignStudio'
 import { CustomPreview } from './components/custom/CustomPreview'
+import { TypeCatalog } from './components/custom/TypeCatalog'
 import { ComponentDetail } from './components/showcase/ComponentDetail'
-import { ComponentShowcase } from './components/showcase/ComponentShowcase'
 import { buildDesignTypeCategories } from './custom/designTypeCategories'
 import { extremeSeedDesigns } from './custom/extremeSeedDesigns'
 import { finalSeedDesigns } from './custom/finalSeedDesigns'
@@ -13,9 +12,8 @@ import { nextSeedDesigns } from './custom/nextSeedDesigns'
 import { seedDesigns } from './custom/seedDesigns'
 import { loadUserDesigns, saveUserDesigns } from './custom/storage'
 import type { CustomDesign } from './custom/types'
-import { componentCategories, componentRegistry } from './registry/componentRegistry'
+import { componentRegistry } from './registry/componentRegistry'
 
-const ALL = 'Alle Designs'
 const FEATURED_IDS = [
   'apple-glass-stat-card',
   'original-3d-graph-card',
@@ -50,8 +48,6 @@ function uniqueDesigns(designs: CustomDesign[]) {
 }
 
 export function App() {
-  const [query, setQuery] = useState('')
-  const [activeCategory, setActiveCategory] = useState(ALL)
   const [route, setRoute] = useState<Route>(() => routeFromHash())
   const [userDesigns, setUserDesigns] = useState<CustomDesign[]>(() => loadUserDesigns())
 
@@ -93,27 +89,6 @@ export function App() {
     () => route.kind === 'custom' ? catalogDesigns.find((design) => design.id === route.id) ?? null : null,
     [route, catalogDesigns],
   )
-
-  const counts = useMemo(() => {
-    const values = new Map<string, number>()
-    for (const component of componentRegistry) {
-      values.set(component.category, (values.get(component.category) ?? 0) + 1)
-    }
-    return values
-  }, [])
-
-  const visibleComponents = useMemo(() => {
-    const normalized = query.trim().toLocaleLowerCase()
-    return componentRegistry.filter((component) => {
-      const categoryMatch = activeCategory === ALL || component.category === activeCategory
-      if (!categoryMatch) return false
-      if (!normalized) return true
-      const haystack = [component.name, component.category, component.variant, component.description, ...component.tags]
-        .join(' ')
-        .toLocaleLowerCase()
-      return haystack.includes(normalized)
-    })
-  }, [activeCategory, query])
 
   const scrollTo = (id: string) => {
     window.requestAnimationFrame(() => {
@@ -165,7 +140,6 @@ export function App() {
         <nav className="topnav" aria-label="Hauptnavigation">
           <a href="#featured">Featured</a>
           <a href="#catalog">Categories</a>
-          <a href="#library">Registry</a>
         </nav>
         <div className="topbar-actions">
           <button className="add-design-top" type="button" onClick={() => { window.location.hash = '/studio' }}>+ Add design</button>
@@ -215,7 +189,7 @@ export function App() {
             <div>
               <span className="section-kicker">Featured</span>
               <h2>Nur sechs Highlights am Anfang.</h2>
-              <p>Die Startseite bleibt ruhig. Erst danach beginnt der vollständige Katalog.</p>
+              <p>Die Startseite bleibt ruhig. Erst wenn du weiter scrollst, beginnt der vollständige Katalog.</p>
             </div>
             <button className="section-link-button" type="button" onClick={() => scrollTo('catalog')}>Alle Kategorien ↓</button>
           </div>
@@ -228,47 +202,10 @@ export function App() {
 
         <TypeCatalog designs={catalogDesigns} onOpen={openDesign} onDeleteUser={deleteCustom} />
 
-        <section className="library structured-section technical-registry" id="library">
-          <div className="library-head">
-            <div>
-              <span className="section-kicker">Developer registry</span>
-              <h2>Technischer Komponentenbestand.</h2>
-              <p>Die Registry bleibt separat für stabile, strukturierte Komponenten und deren Varianten.</p>
-            </div>
-            <label className="search-field">
-              <span>⌕</span>
-              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Registry durchsuchen …" />
-              {query && <button type="button" onClick={() => setQuery('')} aria-label="Suche leeren">×</button>}
-            </label>
-          </div>
-
-          <div className="library-layout">
-            <aside className="category-nav" aria-label="Registry-Kategorien">
-              <button className={activeCategory === ALL ? 'active' : ''} type="button" onClick={() => setActiveCategory(ALL)}><span>{ALL}</span><b>{componentRegistry.length}</b></button>
-              {componentCategories.map((category) => (
-                <button className={activeCategory === category ? 'active' : ''} type="button" key={category} onClick={() => setActiveCategory(category)}>
-                  <span>{category}</span><b>{counts.get(category) ?? 0}</b>
-                </button>
-              ))}
-            </aside>
-
-            <div className="component-list">
-              <div className="result-bar"><div><strong>{activeCategory}</strong><span>{visibleComponents.length} Designs</span></div><span className="result-hint">Preview · Interact · Get code</span></div>
-              <div className="design-gallery">
-                {visibleComponents.length > 0 ? visibleComponents.map((component, index) => (
-                  <ComponentShowcase key={component.id} component={component} index={index} onGetCode={() => { window.location.hash = `/component/${encodeURIComponent(component.id)}` }} />
-                )) : (
-                  <div className="empty-state"><span>⌕</span><h3>Nichts gefunden</h3><p>Versuche einen anderen Suchbegriff oder eine andere Kategorie.</p></div>
-                )}
-              </div>
-            </div>
-          </div>
-        </section>
-
         <section className="about" id="about">
-          <span className="section-kicker">Simple structure</span>
-          <h2>Highlights oben. Kategorien darunter. Alles an seinem Platz.</h2>
-          <p>Neue Designs landen automatisch nach ihrem UI-Typ im passenden Bereich. Deine eigenen Designs werden genauso einsortiert.</p>
+          <span className="section-kicker">One catalog</span>
+          <h2>Buttons zu Buttons. Cards zu Cards. Alles eindeutig.</h2>
+          <p>Die alte doppelte Sortierung nach Stil ist aus der Hauptseite entfernt. Der Typ-Katalog ist jetzt die zentrale Galerie.</p>
           <a href="https://github.com/Redurbabat/UI-Kit" target="_blank" rel="noreferrer">Repository ansehen ↗</a>
         </section>
       </main>
